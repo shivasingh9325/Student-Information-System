@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Student Information System
 
 A comprehensive Java web application for managing student information with a modern HTML5 frontend.
@@ -147,3 +148,7 @@ This project is for educational purposes.
 ## Contributing
 
 Feel free to submit issues and enhancement requests.
+=======
+# Student-Information-System
+A Student Information System built with Java Servlets, JDBC, MySQL, and Bootstrap, featuring RESTful APIs and interactive dashboards.
+>>>>>>> ef04fb534ffbb3b1b9fade283effb9d67045caff
