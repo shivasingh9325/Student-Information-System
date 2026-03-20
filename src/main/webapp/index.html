@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<!-- 
+    MAIN DASHBOARD HTML FILE
+    Purpose: Main interface for Student Information System
+    Technologies: HTML5, Bootstrap 5, JavaScript, Chart.js
+-->
+<html lang="en">
+<head>
+    <!-- META TAGS FOR RESPONSIVE DESIGN -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information System</title>
+    
+    <!-- BOOTSTRAP 5 CSS - For responsive layout and pre-styled components -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- CHART.JS - For graphical reports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CUSTOM CSS STYLES -->
+    <style>
+        /* SIDEBAR STYLING */
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50, #34495e);
+            min-height: 100vh;
+            color: white;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            border-left-color: #3498db;
+            color: #3498db;
+        }
+        
+        /* MAIN CONTENT STYLING */
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* CARD STYLING */
+        .stat-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* TABLE STYLING */
+        .student-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* LOADING SPINNER */
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN LAYOUT CONTAINER -->
+    <div class="container-fluid">
+        <div class="row">
+            
+            <!-- SIDEBAR NAVIGATION -->
+            <nav class="col-md-3 col-lg-2 sidebar">
+                <div class="position-sticky">
+                    <!-- SYSTEM BRANDING -->
+                    <div class="text-center py-4">
+                        <h4 class="text-white">Student System</h4>
+                        <small class="text-muted">Management Portal</small>
+                    </div>
+                    
+                    <!-- NAVIGATION MENU -->
+                    <ul class="nav flex-column">
+                        <li><a href="#" class="active" onclick="showDashboard()">📊 Dashboard</a></li>
+                        <li><a href="#" onclick="showAddStudent()">➕ Add Student</a></li>
+                        <li><a href="#" onclick="showAllStudents()">👥 View Students</a></li>
+                        <li><a href="#" onclick="showSearchStudent()">🔍 Search Student</a></li>
+                        <li><a href="#" onclick="showReports()">📈 Generate Reports</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="col-md-9 col-lg-10 main-content">
+                
+                <!-- PAGE HEADER -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-dark">Student Information System</h2>
+                    <div class="text-muted" id="currentDate"></div>
+                </div>
+
+                <!-- DASHBOARD SECTION (Default View) -->
+                <div id="dashboardSection">
+                    <!-- STATISTICS CARDS -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Students</h5>
+                                    <h2 id="totalStudents" class="card-text">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card bg-success text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Courses</h5>
+                                    <h2 id="totalCourses" class="card-text">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-white">
+                                    <h5 class="mb-0">Quick Actions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-primary me-2" onclick="showAddStudent()">Add New Student</button>
+                                    <button class="btn btn-outline-secondary me-2" onclick="showAllStudents()">View All Students</button>
+                                    <button class="btn btn-outline-info" onclick="showReports()">Generate Reports</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD STUDENT SECTION -->
+                <div id="addStudentSection" style="display: none;">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Add New Student</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="addStudentForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Roll Number *</label>
+                                        <input type="text" class="form-control" id="rollNo" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="name" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Course *</label>
+                                        <select class="form-control" id="course" required>
+                                            <option value="">Select Course</option>
+                                            <option value="Computer Engineering">Computer Engineering</option>
+                                            <option value="IT Engineering">IT Engineering</option>
+                                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                            <option value="Civil Engineering">Civil Engineering</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Batch *</label>
+                                        <input type="text" class="form-control" id="batch" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Contact Info</label>
+                                        <input type="text" class="form-control" id="contactInfo">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success">Add Student</button>
+                                <button type="button" class="btn btn-secondary" onclick="showDashboard()">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW ALL STUDENTS SECTION -->
+                <div id="viewStudentsSection" style="display: none;">
+                    <div class="card student-table">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Students</h5>
+                            <button class="btn btn-light btn-sm" onclick="refreshStudents()">Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Roll No</th>
+                                            <th>Name</th>
+                                            <th>Course</th>
+                                            <th>Batch</th>
+                                            <th>Contact</th>
+                                            <th>Email</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentsTableBody">
+                                        <!-- Students will be loaded here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEARCH STUDENT SECTION -->
+                <div id="searchStudentSection" style="display: none;">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Search Student</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="searchInput" 
+                                           placeholder="Enter roll number or name...">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-info w-100" onclick="searchStudents()">Search</button>
+                                </div>
+                            </div>
+                            <div id="searchResults">
+                                <!-- Search results will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORTS SECTION -->
+                <div id="reportsSection" style="display: none;">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">Generate Reports</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Course-wise Report</h5>
+                                            <canvas id="courseChart" width="400" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOADING SPINNER -->
+                <div id="loadingSpinner" class="text-center my-5" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading data...</p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP & JAVASCRIPT LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CUSTOM JAVASCRIPT APPLICATION -->
+    <script>
+        /**
+         * MAIN APPLICATION JAVASCRIPT FILE
+         * Purpose: Handles frontend logic, API calls, and dynamic content
+         * OOP Concepts: Functions, Event Handling, DOM Manipulation, AJAX
+         */
+
+        // API BASE URL - Backend servlet endpoint
+        const API_BASE = 'http://localhost:8080/student-system/students';
+
+        // GLOBAL VARIABLES
+        let allStudents = [];
+        let courseChart = null;
+
+        /**
+         * INITIALIZE APPLICATION
+         * Called when page loads to set up initial state
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date in header
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+            
+            // Load initial dashboard data
+            loadDashboardData();
+            
+            // Set up form submission handler
+            document.getElementById('addStudentForm').addEventListener('submit', handleAddStudent);
+        });
+
+        /**
+         * LOAD DASHBOARD DATA
+         * Fetches statistics and updates dashboard cards
+         */
+        async function loadDashboardData() {
+            try {
+                showLoading();
+                const response = await fetch(API_BASE);
+                const students = await response.json();
+                
+                allStudents = students;
+                
+                // Update statistics
+                document.getElementById('totalStudents').textContent = students.length;
+                
+                // Calculate unique courses
+                const courses = [...new Set(students.map(student => student.course))];
+                document.getElementById('totalCourses').textContent = courses.length;
+                
+                hideLoading();
+            } catch (error) {
+                console.error('Dashboard loading error:', error);
+                alert('Failed to load dashboard data');
+                hideLoading();
+            }
+        }
+
+        /**
+         * SHOW/HIDE SECTION FUNCTIONS
+         * Handle navigation between different application sections
+         */
+        function showSection(sectionId) {
+            // Hide all sections
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('addStudentSection').style.display = 'none';
+            document.getElementById('viewStudentsSection').style.display = 'none';
+            document.getElementById('searchStudentSection').style.display = 'none';
+            document.getElementById('reportsSection').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function showDashboard() {
+            showSection('dashboardSection');
+            loadDashboardData();
+        }
+
+        function showAddStudent() {
+            showSection('addStudentSection');
+            document.getElementById('addStudentForm').reset();
+        }
+
+        function showAllStudents() {
+            showSection('viewStudentsSection');
+            loadAllStudents();
+        }
+
+        function showSearchStudent() {
+            showSection('searchStudentSection');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        function showReports() {
+            showSection('reportsSection');
+            generateCourseReport();
+        }
+
+        /**
+         * HANDLE ADD STUDENT FORM SUBMISSION
+         * Sends POST request to backend API
+         */
+        async function handleAddStudent(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const studentData = {
+                rollNo: document.getElementById('rollNo').value,
+                name: document.getElementById('name').value,
+                course: document.getElementById('course').value,
+                batch: document.getElementById('batch').value,
+                contactInfo: document.getElementById('contactInfo').value,
+                email: document.getElementById('email').value
+            };
+            
+            try {
+                showLoading();
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(studentData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Student added successfully!');
+                    document.getElementById('addStudentForm').reset();
+                    showDashboard();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Add student error:', error);
+                alert('Failed to add student');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        /**
+         * LOAD ALL STUDENTS FOR TABLE VIEW
+         * Fetches all students and populates the table
+         */
+        async function loadAllStudents() {
+            try {
+                showLoading();
+                const response = await fetch(API_BASE);
+                const students = await response.json();
+                
+                const tableBody = document.getElementById('studentsTableBody');
+                tableBody.innerHTML = '';
+                
+                if (students.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No students found</td></tr>';
+                    return;
+                }
+                
+                // Populate table with student data
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${student.course}</td>
+                        <td>${student.batch}</td>
+                        <td>${student.contactInfo || 'N/A'}</td>
+                        <td>${student.email || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editStudent('${student.rollNo}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteStudent('${student.rollNo}')">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Load students error:', error);
+                alert('Failed to load students');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        /**
+         * SEARCH STUDENTS FUNCTIONALITY
+         * Searches students by roll number or name
+         */
+        async function searchStudents() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            
+            if (!searchTerm) {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            try {
+                showLoading();
+                const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(searchTerm)}`);
+                const students = await response.json();
+                
+                const resultsDiv = document.getElementById('searchResults');
+                
+                if (students.length === 0) {
+                    resultsDiv.innerHTML = '<div class="alert alert-info">No students found</div>';
+                    return;
+                }
+                
+                // Display search results
+                let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>' +
+                           '<th>Roll No</th><th>Name</th><th>Course</th><th>Batch</th><th>Contact</th><th>Email</th></tr></thead><tbody>';
+                
+                students.forEach(student => {
+                    html += `<tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${student.course}</td>
+                        <td>${student.batch}</td>
+                        <td>${student.contactInfo || 'N/A'}</td>
+                        <td>${student.email || 'N/A'}</td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table></div>';
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('Search failed');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        /**
+         * GENERATE COURSE-WISE REPORT
+         * Creates chart showing student distribution by course
+         */
+        async function generateCourseReport() {
+            try {
+                const response = await fetch(`${API_BASE}/report`);
+                const report = await response.json();
+                
+                const ctx = document.getElementById('courseChart').getContext('2d');
+                
+                // Destroy existing chart if it exists
+                if (courseChart) {
+                    courseChart.destroy();
+                }
+                
+                // Create new chart
+                courseChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(report),
+                        datasets: [{
+                            label: 'Number of Students',
+                            data: Object.values(report),
+                            backgroundColor: [
+                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                                '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Student Distribution by Course'
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Report generation error:', error);
+                alert('Failed to generate report');
+            }
+        }
+
+        /**
+         * DELETE STUDENT FUNCTION
+         * Confirms and deletes student record
+         */
+        async function deleteStudent(rollNo) {
+            if (!confirm(`Are you sure you want to delete student ${rollNo}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/${rollNo}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Student deleted successfully');
+                    loadAllStudents(); // Refresh the list
+                    loadDashboardData(); // Update dashboard
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Failed to delete student');
+            }
+        }
+
+        /**
+         * EDIT STUDENT FUNCTION
+         * Placeholder for edit functionality
+         */
+        function editStudent(rollNo) {
+            alert(`Edit functionality for student ${rollNo} would open an edit form.`);
+            // Implementation would open a pre-filled form with student data
+        }
+
+        /**
+         * REFRESH STUDENTS LIST
+         */
+        function refreshStudents() {
+            loadAllStudents();
+        }
+
+        /**
+         * LOADING INDICATOR FUNCTIONS
+         */
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>

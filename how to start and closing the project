@@ -1,0 +1,60 @@
+Set environment variables:
+$env:JAVA_HOME = "C:\Program Files\Zulu\zulu-11"
+$env:PATH += ";$env:JAVA_HOME\bin"
+$env:PATH += ";maven\apache-maven-3.9.9\bin"
+
+command to run on terminal:  mvn clean compile tomcat7:run
+
+loacal hostlink: http://localhost:8080/student-system
+
+###@@@this was form my side and will run the project                                       
+
+
+
+
+To Run the Project Again:
+Open Command Prompt or PowerShell
+Navigate to the project directory:
+
+cd "c:/Users/SHIVA/Desktop/Student Information System Project Report"
+
+Set environment variables:
+$env:JAVA_HOME = "C:\Program Files\Zulu\zulu-11"
+$env:PATH += ";$env:JAVA_HOME\bin"
+$env:PATH += ";maven\apache-maven-3.9.9\bin"
+
+
+
+Run the application:
+
+mvn clean compile tomcat7:run
+                                         this is the main part from me
+
+Wait for "Database connected successfully!" message
+Open browser to: http://localhost:8080/student-system/
+To Close the Project:
+Press Ctrl+C in the terminal, or type 'y' when prompted to terminate batch job.
+The Student Information System is fully integrated with backend (Java servlets, H2 database) connected to frontend (HTML/JS dashboard). All CRUD operations work through the web interface.
+
+
+this process is same to start and close bothbackend and frontend ?
+
+Task Completed
+Yes, the process is the same to start and close both backend and frontend.
+
+Why? The backend (Java servlets, database operations) and frontend (HTML/JS dashboard) are integrated into a single web application (WAR file) running on Apache Tomcat via Maven. Starting the Maven command runs the entire application, and stopping it closes everything.
+
+The Student Information System is fully integrated and functional. The backend API endpoints are connected to the frontend dashboard, allowing complete CRUD operations through the web interface.
+
+
+
+The localhost link is: http://localhost:8080/student-system
+    
+                                             this is imp for me 
+
+Explanation:
+
+localhost: Refers to your local machine (127.0.0.1).
+8080: The port number where Apache Tomcat (the web server) is running.
+/student-system: The context path of the web application (defined in pom.xml).
+After running the Maven command (mvn clean compile tomcat7:run), the server starts and displays this link in the terminal. Open any web browser and paste this URL to access the Student Information System dashboard.
