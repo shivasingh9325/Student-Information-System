@@ -20,7 +20,7 @@ A comprehensive Java web application for managing student information with a mod
 - **Server**: Apache Tomcat (via Maven plugin)
 
 ## Prerequisites
-
+-free Dick space
 - Java 11 or higher
 - MySQL 8.0 or higher
 - Maven 3.6 or higher
@@ -136,6 +136,7 @@ This creates a WAR file in the `target/` directory that can be deployed to any s
       <port>9090</port>
   </configuration>
   ```
+  
 
 ### Build Errors
 - Ensure Java 11+ is installed
